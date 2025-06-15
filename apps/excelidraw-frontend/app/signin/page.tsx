@@ -9,7 +9,7 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); 
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +25,38 @@ function SignIn() {
       if (!token) {
         throw new Error("Token not received from server.");
       }
-  
+
       alert("You are successfully signed in!");
       router.push(`/room`);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+    } catch (error: any) {
+      let errorMessage = "Something went wrong";
+
+      if (error.response) {
+        // Server responded with an error status
+        if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.response.data?.errors) {
+          // Handle validation errors
+          const validationErrors = error.response.data.errors
+            .map((err: any) => `${err.field}: ${err.message}`)
+            .join(", ");
+          errorMessage = `Validation errors: ${validationErrors}`;
+        } else if (error.response.status === 403) {
+          errorMessage = "Invalid email or password";
+        } else if (error.response.status === 400) {
+          errorMessage = "Invalid input data";
+        } else {
+          errorMessage = `Server error: ${error.response.status}`;
+        }
+      } else if (error.request) {
+        // Network error
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      } else {
+        // Other error
+        errorMessage = error.message || "An unexpected error occurred";
+      }
+
       alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -47,7 +74,10 @@ function SignIn() {
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{" "}
-          <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <a
+            href="/signup"
+            className="font-medium text-blue-600 hover:text-blue-500"
+          >
             create a new account
           </a>
         </p>
@@ -57,7 +87,10 @@ function SignIn() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email address
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -79,7 +112,10 @@ function SignIn() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -108,13 +144,19 @@ function SignIn() {
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                <a
+                  href="#"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
                   Forgot your password?
                 </a>
               </div>

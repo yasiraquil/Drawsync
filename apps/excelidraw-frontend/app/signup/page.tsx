@@ -1,14 +1,14 @@
-"use client"
-import axios from 'axios';
-import React, { useState } from 'react';
-import { PenTool, Mail, Lock, User } from 'lucide-react';
-import { getBackendUrl } from '@/config';
-import { useRouter } from 'next/navigation';
+"use client";
+import axios from "axios";
+import React, { useState } from "react";
+import { PenTool, Mail, Lock, User } from "lucide-react";
+import { getBackendUrl } from "@/config";
+import { useRouter } from "next/navigation";
 
 function Home() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const router = useRouter();
 
@@ -16,17 +16,45 @@ function Home() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${getBackendUrl()}/signup`,{
+      const res = await axios.post(`${getBackendUrl()}/signup`, {
         email,
         password,
-        name
-      })
+        name,
+      });
       console.log(res.data);
       alert("You are successfully signed up!");
       router.push(`/signin`);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Something went wrong";
+    } catch (error: any) {
+      let errorMessage = "Something went wrong";
+
+      if (error.response) {
+        // Server responded with an error status
+        if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.response.data?.errors) {
+          // Handle validation errors
+          const validationErrors = error.response.data.errors
+            .map((err: any) => `${err.field}: ${err.message}`)
+            .join(", ");
+          errorMessage = `Validation errors: ${validationErrors}`;
+        } else if (error.response.status === 409) {
+          errorMessage = "User already exists with this email";
+        } else if (error.response.status === 400) {
+          errorMessage = "Invalid input data";
+        } else {
+          errorMessage = `Server error: ${error.response.status}`;
+        }
+      } else if (error.request) {
+        // Network error
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      } else {
+        // Other error
+        errorMessage = error.message || "An unexpected error occurred";
+      }
+
       alert(`Error: ${errorMessage}`);
+      console.error("Signup error:", error);
     }
   };
   return (
@@ -39,8 +67,11 @@ function Home() {
           Create your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <a href="/signin" className="font-medium text-blue-600 hover:text-blue-500">
+          Already have an account?{" "}
+          <a
+            href="/signin"
+            className="font-medium text-blue-600 hover:text-blue-500"
+          >
             Sign in
           </a>
         </p>
@@ -50,7 +81,10 @@ function Home() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Full name
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -72,7 +106,10 @@ function Home() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email address
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -94,7 +131,10 @@ function Home() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -126,12 +166,15 @@ function Home() {
                 required
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
-                I agree to the{' '}
+              <label
+                htmlFor="terms"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                I agree to the{" "}
                 <a href="#" className="text-blue-600 hover:text-blue-500">
                   Terms of Service
-                </a>{' '}
-                and{' '}
+                </a>{" "}
+                and{" "}
                 <a href="#" className="text-blue-600 hover:text-blue-500">
                   Privacy Policy
                 </a>

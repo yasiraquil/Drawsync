@@ -21,7 +21,7 @@ function Home() {
         console.log(token);
         const res = await axios.post(
           `${getBackendUrl()}/room`,
-          { name: name }, 
+          { name: name },
           {
             headers: {
               Authorization: `Bearer ${token}`, // Fix: Add "Bearer " prefix
@@ -29,22 +29,22 @@ function Home() {
             },
           }
         );
-        const roomId = res.data.roomId; 
+        const roomId = res.data.roomId;
         console.log(res.data.room);
         alert(`Room created successfully! Room ID: ${roomId}`);
-        
+
         // Store user name in localStorage
         if (userName.trim()) {
           localStorage.setItem('userName', userName.trim());
         }
-        
+
         Router.push(`${getExileUrl()}/${roomId}`);
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : "Something went wrong";
         alert(`Error: ${errorMessage}`);
       }
     };
-    
+
 
   const joinRoom = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,12 +56,12 @@ function Home() {
     try{
         const res  = await axios.get(`${getBackendUrl()}/room/${slug}`);
         console.log("Room Successfully joined",res.data);
-        
+
         // Store user name in localStorage
         if (userName.trim()) {
           localStorage.setItem('userName', userName.trim());
         }
-        
+
         Router.push(`${getExileUrl()}/${slug}`);
     }catch(error: unknown){
       const errorMessage = error instanceof Error ? error.message : "Something went wrong";
@@ -85,29 +85,17 @@ function Home() {
           </p>
         </div>
 
-        {/* AI Tools Navigation */}
-        <div className="text-center mb-6">
-          <button
-            onClick={() => Router.push("/ai-tools")}
-            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
-          >
-            <Brain className="w-4 h-4 mr-2" />
-            <Sparkles className="w-4 h-4 mr-2" />
-            Try AI Tools
-          </button>
-        </div>
-
         <div className="mt-8 space-y-6">
             <input type="text" id="userName"
                 value={userName}
-                onChange={(e) => setUserName(e.target.value)} 
-                placeholder="Enter Your Name (optional)" 
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Enter Your Name (optional)"
                 className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-black bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             />
             <input type="text" id="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)} 
-                placeholder="Enter Room Name" 
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter Room Name"
                 className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-black bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             />
           <button

@@ -28,8 +28,9 @@ const robotoMono = Roboto_Mono({
 
 export const metadata: Metadata = {
   title: "Draw-App - Collaborative Whiteboard",
-  description: "Real-time collaborative drawing and whiteboard app with AI features",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+  description: "Real-time collaborative drawing and whiteboard app",
+  viewport:
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
   themeColor: "#ffffff",
   appleWebApp: {
     capable: true,
@@ -49,7 +50,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Draw-App" />
@@ -57,18 +61,22 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <meta name="format-detection" content="telephone=no" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${robotoMono.variable} antialiased touch-manipulation`}
-        style={{ 
-          overscrollBehavior: 'none',
-          WebkitOverflowScrolling: 'touch',
-          WebkitUserSelect: 'none',
-          WebkitTouchCallout: 'none',
-          fontSmooth: 'antialiased',
-          WebkitFontSmoothing: 'antialiased',
-          MozOsxFontSmoothing: 'grayscale',
+        style={{
+          overscrollBehavior: "none",
+          WebkitOverflowScrolling: "touch",
+          WebkitUserSelect: "none",
+          WebkitTouchCallout: "none",
+          fontSmooth: "antialiased",
+          WebkitFontSmoothing: "antialiased",
+          MozOsxFontSmoothing: "grayscale",
         }}
       >
         {children}

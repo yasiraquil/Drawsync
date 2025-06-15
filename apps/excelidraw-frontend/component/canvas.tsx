@@ -11,14 +11,11 @@ import {
   Redo2,
   Palette,
   X,
-  Brain,
-  Sparkles,
   Type,
   Pipette,
   PenLine,
 } from "lucide-react";
 import { Game } from "@/draw/Game";
-import { getMLBackendUrl } from "@/config";
 import { DrawingIndicator } from "./DrawingIndicator";
 import { useRouter } from "next/navigation";
 
@@ -48,14 +45,6 @@ export function Canvas({
 
   const [isPanning, setIsPanning] = useState(false);
 
-  // AI Tools State
-  const [showAIPanel, setShowAIPanel] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiOperation, setAiOperation] = useState("");
-
-  const [aiError, setAiError] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
   // Text Tool State - Now integrated with Game.ts
   const [isTyping, setIsTyping] = useState(false);
   const [currentTextShapeId, setCurrentTextShapeId] = useState<string | null>(
@@ -63,18 +52,10 @@ export function Canvas({
   );
   const [textInput, setTextInput] = useState("");
 
-  // Live AI Shape Recognition
-  const [liveAIShape, setLiveAIShape] = useState(false);
-  const [shapeDetectionTimeout, setShapeDetectionTimeout] =
-    useState<NodeJS.Timeout | null>(null);
-
-  const [isConvertingShape, setIsConvertingShape] = useState(false);
-
   // UI State
   const [showQuickTips, setShowQuickTips] = useState(true);
 
   // Styling State
-
   const [showColorPopup, setShowColorPopup] = useState(false);
 
   const [selectedColorType, setSelectedColorType] = useState<
@@ -85,8 +66,6 @@ export function Canvas({
   const [strokeWidth, setStrokeWidth] = useState(2);
 
   const [textColor, setTextColor] = useState("#1565C0");
-
-  const mlBackendUrl = getMLBackendUrl();
 
   // Color helper functions
   const getCurrentColor = () => {
@@ -572,164 +551,6 @@ export function Canvas({
     }
   };
 
-  // AI Tools Functions
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setAiError("");
-    }
-  };
-
-  const runCompleteAIAnalysis = async () => {
-    if (!selectedFile) {
-      setAiError("Please select an image first");
-      return;
-    }
-
-    setAiLoading(true);
-    setAiOperation("Running complete AI analysis...");
-    setAiError("");
-
-    try {
-      const formData = new FormData();
-      formData.append("image", selectedFile);
-      formData.append("include_ocr", "true");
-      formData.append("include_shape_recognition", "true");
-      formData.append("include_diagram_detection", "true");
-
-      const response = await fetch(`${mlBackendUrl}/ai/complete-analysis`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Complete analysis failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log("AI analysis result:", result.analysis);
-    } catch (err) {
-      setAiError(
-        err instanceof Error ? err.message : "Complete analysis failed",
-      );
-    } finally {
-      setAiLoading(false);
-      setAiOperation("");
-    }
-  };
-
-  // Live AI Shape Recognition Functions
-  const enableLiveAIShape = () => {
-    setLiveAIShape(true);
-    // Add event listener to canvas for drawing detection
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener("mouseup", handleDrawingComplete);
-      canvasRef.current.addEventListener("touchend", handleDrawingComplete);
-    }
-  };
-
-  const disableLiveAIShape = () => {
-    setLiveAIShape(false);
-    if (canvasRef.current) {
-      canvasRef.current.removeEventListener("mouseup", handleDrawingComplete);
-      canvasRef.current.removeEventListener("touchend", handleDrawingComplete);
-    }
-    if (shapeDetectionTimeout) {
-      clearTimeout(shapeDetectionTimeout);
-    }
-  };
-
-  const handleDrawingComplete = () => {
-    if (!liveAIShape || selectedTool !== "pencil") return;
-
-    // Clear previous timeout
-    if (shapeDetectionTimeout) {
-      clearTimeout(shapeDetectionTimeout);
-    }
-
-    // Wait a bit for the drawing to complete, then analyze
-    const timeout = setTimeout(() => {
-      analyzeAndConvertShape();
-    }, 1000); // 1 second delay
-
-    setShapeDetectionTimeout(timeout);
-  };
-
-  const analyzeAndConvertShape = async () => {
-    if (!canvasRef.current || !liveAIShape) return;
-
-    setIsConvertingShape(true);
-
-    try {
-      // Convert canvas to blob
-      const blob = await new Promise<Blob>((resolve) => {
-        canvasRef.current!.toBlob((blob) => {
-          resolve(blob!);
-        }, "image/png");
-      });
-
-      // Create file from blob
-      const file = new File([blob], "drawn-shape.png", { type: "image/png" });
-
-      // Send to AI backend for shape recognition
-      const formData = new FormData();
-      formData.append("image", file);
-      formData.append("clean_shapes", "true");
-
-      const response = await fetch(`${mlBackendUrl}/ai/shape-recognition`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Shape recognition failed");
-      }
-
-      const result = await response.json();
-
-      if (result.shapes && result.shapes.length > 0 && result.cleaned_image) {
-        // Replace the rough drawing with the cleaned shape
-        replaceCanvasWithCleanedShape(result.cleaned_image);
-
-        // Show success message
-        setAiError("");
-
-        // Show success notification
-        setTimeout(() => {
-          setAiError("Shape converted successfully! ✨");
-          setTimeout(() => setAiError(""), 3000);
-        }, 100);
-      }
-    } catch (err) {
-      console.error("Live shape recognition failed:", err);
-      setAiError("Shape conversion failed. Try drawing more clearly.");
-    } finally {
-      setIsConvertingShape(false);
-    }
-  };
-
-  const replaceCanvasWithCleanedShape = (cleanedImageBase64: string) => {
-    if (!canvasRef.current) return;
-
-    const ctx = canvasRef.current.getContext("2d");
-    if (!ctx) return;
-    const img = new Image();
-    img.onload = () => {
-      ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-
-      // Draw the cleaned shape
-      img.src = `data:image/png;base64,${cleanedImageBase64}`;
-
-      // Notify the game about the change
-      if (game) {
-        // The canvas has been updated with the cleaned shape
-        console.log("Canvas updated with cleaned shape");
-      }
-    };
-    img.src = `data:image/png;base64,${cleanedImageBase64}`;
-  };
-
   // Add leave room logic
   useEffect(() => {
     // Handle page unload/leave
@@ -804,22 +625,11 @@ export function Canvas({
               <span>{participantCount}</span>
             </div>
             <button
-              onClick={() => setShowAIPanel(!showAIPanel)}
-              className={`p-1.5 rounded transition-all duration-200 ${
-                showAIPanel
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              }`}
-              title="AI Tools"
-            >
-              <Brain size={16} />
-            </button>
-            <button
               onClick={() => setShowQuickTips(!showQuickTips)}
               className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-all duration-200"
               title="Quick Tips"
             >
-              <Sparkles size={16} />
+              <div className="w-4 h-4 bg-blue-600 rounded"></div>
             </button>
           </div>
         </div>
@@ -987,25 +797,6 @@ export function Canvas({
             >
               {isPanning ? "🔄 Panning active" : "💡 Tap & drag to pan"}
             </div>
-
-            {liveAIShape && (
-              <div
-                className={`px-2 py-1 rounded text-xs font-medium flex items-center space-x-2 ${
-                  isConvertingShape
-                    ? "bg-blue-50 text-blue-700 border border-blue-200"
-                    : "bg-green-50 text-green-700 border border-green-200"
-                }`}
-              >
-                <div
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    isConvertingShape
-                      ? "bg-blue-600 animate-pulse"
-                      : "bg-green-600"
-                  }`}
-                ></div>
-                <span>{isConvertingShape ? "Converting..." : "Live AI"}</span>
-              </div>
-            )}
           </div>
         </div>
 
@@ -1132,98 +923,6 @@ export function Canvas({
           </div>
         )}
 
-        {/* AI Panel - Mobile Optimized */}
-        {showAIPanel && (
-          <div
-            className="absolute bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-gray-200/60 shadow-lg"
-            style={{
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              maxWidth: "95vw",
-              maxHeight: "90vh",
-              overflow: "auto",
-            }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-2">
-                <Brain className="w-5 h-5 text-gray-900" />
-                <h3 className="text-gray-900 font-medium">AI Tools</h3>
-              </div>
-              <button
-                onClick={() => setShowAIPanel(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* AI Loading State */}
-            {aiLoading && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400 mr-2"></div>
-                  <span className="text-blue-700 text-sm">{aiOperation}</span>
-                </div>
-              </div>
-            )}
-
-            {/* AI Error Display */}
-            {aiError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700 text-sm">{aiError}</p>
-              </div>
-            )}
-
-            {/* File Upload */}
-            <div className="mb-4">
-              <label className="text-gray-600 text-xs mb-2 block">
-                Upload Image
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
-              />
-              {selectedFile && (
-                <p className="text-gray-500 text-xs mt-1">
-                  Selected: {selectedFile.name}
-                </p>
-              )}
-            </div>
-
-            {selectedFile && (
-              <button
-                onClick={runCompleteAIAnalysis}
-                className="w-full mb-4 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Run AI Analysis
-              </button>
-            )}
-
-            {/* Live AI Toggle */}
-            <button
-              onClick={() => {
-                if (liveAIShape) {
-                  disableLiveAIShape();
-                } else {
-                  enableLiveAIShape();
-                }
-              }}
-              className={`w-full px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center ${
-                liveAIShape
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              {liveAIShape ? "Live AI Active" : "Enable Live AI"}
-            </button>
-          </div>
-        )}
-
         {/* Quick Tips - Mobile Optimized */}
         {showQuickTips && (
           <div className="absolute bottom-20 left-4 right-4 bg-white/95 backdrop-blur-md rounded-xl p-4 border border-gray-200/60 shadow-lg">
@@ -1249,9 +948,6 @@ export function Canvas({
               </p>
               <p>
                 • <strong>Tap color palette</strong> for styling options
-              </p>
-              <p>
-                • <strong>Tap AI button</strong> for smart features
               </p>
             </div>
           </div>
@@ -1297,19 +993,6 @@ export function Canvas({
                     </h3>
                     <p className="text-xs text-gray-500">
                       Draw together with friends
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <Brain className="w-4 h-4 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">
-                      AI Features
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      Smart shape recognition and more
                     </p>
                   </div>
                 </div>
