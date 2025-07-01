@@ -14,6 +14,7 @@ import {
   Type,
   Pipette,
   PenLine,
+  HelpCircle,
 } from "lucide-react";
 import { Game } from "@/draw/Game";
 import { DrawingIndicator } from "./DrawingIndicator";
@@ -606,30 +607,30 @@ export function Canvas({
 
               <span className="text-gray-600 text-xs font-medium">
                 Room: {roomId}
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => {
-                      router.push("/room");
-                    }}
-                  >
-                    exit
-                  </button>
-                </div>
               </span>
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
             <div className="flex items-center space-x-1 text-gray-600 text-xs">
+              <button
+                onClick={() => {
+                  router.push("/room");
+                }}
+                className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-all duration-200 border border-transparent hover:border-red-200"
+                title="Exit Room"
+              >
+                Exit
+              </button>
               <Users size={14} />
               <span>{participantCount}</span>
             </div>
             <button
               onClick={() => setShowQuickTips(!showQuickTips)}
-              className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-all duration-200"
+              className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-all duration-200"
               title="Quick Tips"
             >
-              <div className="w-4 h-4 bg-blue-600 rounded"></div>
+              <HelpCircle size={16} />
             </button>
           </div>
         </div>
