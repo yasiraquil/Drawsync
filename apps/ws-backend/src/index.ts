@@ -44,6 +44,19 @@ function checkUser(token: string): string | null {
   }
 }
 
+// Helper function to get room by shortCode
+async function getRoomByShortCode(shortCode: string) {
+  try {
+    const room = await prismaClient.room.findFirst({
+      where: { shortCode },
+    });
+    return room;
+  } catch (error) {
+    console.error(`Error finding room with shortCode ${shortCode}:`, error);
+    return null;
+  }
+}
+
 // 1. Enhanced helper function with error handling
 function getActiveRoomParticipants(roomId: string, excludeWs?: WebSocket) {
   console.log(`getActiveRoomParticipants called for room ${roomId}`);
@@ -276,9 +289,16 @@ wss.on("connection", function connection(ws, request) {
         const { roomId, message } = parsedData;
         console.log("Chat message in room:", roomId);
 
+        // Find room by shortCode to get numeric ID
+        const room = await getRoomByShortCode(roomId);
+        if (!room) {
+          console.error(`Room not found for shortCode: ${roomId}`);
+          return;
+        }
+
         await prismaClient.chat.create({
           data: {
-            roomId: Number(roomId),
+            roomId: room.id,
             message,
             userId,
           },
@@ -308,17 +328,21 @@ wss.on("connection", function connection(ws, request) {
           const timeout = setTimeout(async () => {
             try {
               // Only save to DB when dragging stops
-              await prismaClient.chat.create({
-                data: {
-                  roomId: Number(roomId),
-                  message: JSON.stringify({
-                    type: "shape_update",
-                    shape,
-                    timestamp: Date.now(),
-                  }),
-                  userId,
-                },
-              });
+              // Find room by shortCode to get numeric ID
+              const room = await getRoomByShortCode(roomId);
+              if (room) {
+                await prismaClient.chat.create({
+                  data: {
+                    roomId: room.id,
+                    message: JSON.stringify({
+                      type: "shape_update",
+                      shape,
+                      timestamp: Date.now(),
+                    }),
+                    userId,
+                  },
+                });
+              }
               pendingShapeUpdates.delete(key);
             } catch (error) {
               console.error("Error saving shape update:", error);
@@ -329,17 +353,21 @@ wss.on("connection", function connection(ws, request) {
           pendingShapeUpdates.set(key, timeout);
         } else {
           // Immediate save for non-dragging edits
-          await prismaClient.chat.create({
-            data: {
-              roomId: Number(roomId),
-              message: JSON.stringify({
-                type: "shape_update",
-                shape,
-                timestamp: Date.now(),
-              }),
-              userId,
-            },
-          });
+          // Find room by shortCode to get numeric ID
+          const room = await getRoomByShortCode(roomId);
+          if (room) {
+            await prismaClient.chat.create({
+              data: {
+                roomId: room.id,
+                message: JSON.stringify({
+                  type: "shape_update",
+                  shape,
+                  timestamp: Date.now(),
+                }),
+                userId,
+              },
+            });
+          }
         }
 
         // Broadcast to all users in the room
@@ -359,9 +387,16 @@ wss.on("connection", function connection(ws, request) {
         user.isDrawing = true;
         user.lastActivity = Date.now();
 
+        // Find room by shortCode to get numeric ID
+        const room = await getRoomByShortCode(roomId);
+        if (!room) {
+          console.error(`Room not found for shortCode: ${roomId}`);
+          return;
+        }
+
         await prismaClient.chat.create({
           data: {
-            roomId: Number(roomId),
+            roomId: room.id,
             message: JSON.stringify({
               type: "shape_create",
               shape,
@@ -416,9 +451,16 @@ wss.on("connection", function connection(ws, request) {
         const { roomId, shapeId } = parsedData;
         console.log("Erase shape in room:", roomId, "shapeId:", shapeId);
 
+        // Find room by shortCode to get numeric ID
+        const room = await getRoomByShortCode(roomId);
+        if (!room) {
+          console.error(`Room not found for shortCode: ${roomId}`);
+          return;
+        }
+
         await prismaClient.chat.create({
           data: {
-            roomId: Number(roomId),
+            roomId: room.id,
             message: JSON.stringify({
               type: "shape_delete",
               action: "erase",

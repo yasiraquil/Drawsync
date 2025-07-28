@@ -24,33 +24,48 @@ function Home() {
       console.log(res.data);
       alert("You are successfully signed up!");
       router.push(`/signin`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = "Something went wrong";
 
-      if (error.response) {
+      const axiosError = error as {
+        response?: {
+          data?: {
+            message?: string;
+            errors?: { field: string; message: string }[];
+          };
+          status?: number;
+        };
+        request?: any;
+        message?: string;
+      };
+
+      if (axiosError.response) {
         // Server responded with an error status
-        if (error.response.data?.message) {
-          errorMessage = error.response.data.message;
-        } else if (error.response.data?.errors) {
+        if (axiosError.response.data?.message) {
+          errorMessage = axiosError.response.data.message;
+        } else if (axiosError.response.data?.errors) {
           // Handle validation errors
-          const validationErrors = error.response.data.errors
-            .map((err: any) => `${err.field}: ${err.message}`)
+          const validationErrors = axiosError.response.data.errors
+            .map(
+              (err: { field: string; message: string }) =>
+                `${err.field}: ${err.message}`,
+            )
             .join(", ");
           errorMessage = `Validation errors: ${validationErrors}`;
-        } else if (error.response.status === 409) {
+        } else if (axiosError.response.status === 409) {
           errorMessage = "User already exists with this email";
-        } else if (error.response.status === 400) {
+        } else if (axiosError.response.status === 400) {
           errorMessage = "Invalid input data";
         } else {
-          errorMessage = `Server error: ${error.response.status}`;
+          errorMessage = `Server error: ${axiosError.response.status}`;
         }
-      } else if (error.request) {
+      } else if (axiosError.request) {
         // Network error
         errorMessage =
           "Network error. Please check your connection and try again.";
       } else {
-        // Other error
-        errorMessage = error.message || "An unexpected error occurred";
+        // Something else happened
+        errorMessage = axiosError.message || "Unknown error occurred";
       }
 
       alert(`Error: ${errorMessage}`);

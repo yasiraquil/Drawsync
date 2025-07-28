@@ -19,7 +19,10 @@ model User {
 
 model Room {
   id         Int      @id @default(autoincrement())
-  slug       String   @unique
+  shortCode  String   @unique
+  name       String
+  password   String?
+  isPublic   Boolean  @default(false)
   created_at DateTime @default(now())
   admindId   String
   chats      Chat[]

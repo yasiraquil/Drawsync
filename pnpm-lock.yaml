@@ -135,8 +135,6 @@ importers:
         specifier: ^4.20.5
         version: 4.20.5
 
-  apps/ml-backend: {}
-
   apps/ws-backend:
     dependencies:
       '@repo/db':
