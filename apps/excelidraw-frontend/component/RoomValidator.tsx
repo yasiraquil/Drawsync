@@ -47,9 +47,9 @@ export function RoomValidator({ roomId, children }: RoomValidatorProps) {
         return;
       }
 
-      // room access token for which room??
-
       // Check if room exists and get basic info
+      // For public rooms: also gets roomAccessToken immediately
+      // For private rooms: only gets basic room info
       const roomRes = await axios.get(`${getBackendUrl()}/room/${roomId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,11 +72,8 @@ export function RoomValidator({ roomId, children }: RoomValidatorProps) {
         needsPassword: !roomInfo.isPublic,
       });
 
-      // If it's a public room, we can proceed directly
-      if (roomInfo.isPublic) {
-        // For public rooms, we still validate by trying to join without password
-        await validateJoinAccess("");
-      }
+      // For public rooms, we already have the roomAccessToken, so we're done! - state have been set
+      // For private rooms, we need password validation (handled by needsPassword state)
     } catch (error: unknown) {
       console.error("Room validation error:", error);
       const axiosError = error as { response?: { status?: number } };
@@ -164,12 +161,6 @@ export function RoomValidator({ roomId, children }: RoomValidatorProps) {
 
     await validateJoinAccess(password.trim());
     setPasswordLoading(false);
-  };
-
-  const redirectWithError = (message: string) => {
-    // Store error message in sessionStorage to show on room page
-    sessionStorage.setItem("roomError", message);
-    router.push("/room");
   };
 
   const goBack = () => {

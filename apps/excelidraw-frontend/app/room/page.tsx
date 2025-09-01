@@ -163,39 +163,15 @@ function Home() {
       return;
     }
 
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        alert("You are not authenticated. Please sign in.");
-        return;
-      }
-
-      // Just check if room exists first
-      const res = await axios.get(`${getBackendUrl()}/room/${joinCode.trim()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log("Room successfully joined", res.data);
-
-      // Store room access token if provided (for both public and private rooms)
-      if (res.data.roomAccessToken) {
-        localStorage.setItem("roomAccessToken", res.data.roomAccessToken);
-      }
-
-      router.push(`${getExileUrl()}/${joinCode.trim()}`);
-    } catch (error: unknown) {
-      const axiosError = error as {
-        response?: { data?: { message?: string } };
-        message?: string;
-      };
-      const errorMessage =
-        axiosError.response?.data?.message ||
-        axiosError.message ||
-        "Something went wrong";
-      alert(`Error: ${errorMessage}`);
+    // Check authentication before redirecting
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("You are not authenticated. Please sign in.");
+      return;
     }
+
+    // Let RoomValidator handle all validation - just redirect to canvas
+    router.push(`${getExileUrl()}/${joinCode.trim()}`);
   };
 
   const deleteRoom = async (shortCode: string, roomName: string) => {
