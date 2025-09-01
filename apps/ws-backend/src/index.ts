@@ -146,6 +146,35 @@ wss.on("connection", function connection(ws, request) {
 
       if (parsedData.type === "join_room") {
         console.log("User joining room:", parsedData.roomId);
+        
+        // ✅ Validate room access token
+        if (!parsedData.roomAccessToken) {
+          ws.send(JSON.stringify({
+            type: "error",
+            message: "Room access token required"
+          }));
+          return;
+        }
+
+        try {
+          const decoded = jwt.verify(parsedData.roomAccessToken, process.env.JWT_SECRET!) as any;
+          
+          // Verify token belongs to this user and room
+          if (decoded.userId !== userId || decoded.roomId !== parsedData.roomId) {
+            ws.send(JSON.stringify({
+              type: "error", 
+              message: "Invalid room access token"
+            }));
+            return;
+          }
+        } catch (error) {
+          console.error("Room access token verification failed:", error);
+          ws.send(JSON.stringify({
+            type: "error",
+            message: "Invalid or expired room access token"
+          }));
+          return;
+        }
 
         // Check if user is already in this room
         if (!user.rooms.includes(parsedData.roomId)) {

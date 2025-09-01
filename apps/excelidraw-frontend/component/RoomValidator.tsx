@@ -31,8 +31,10 @@ export function RoomValidator({ roomId, children }: RoomValidatorProps) {
   const [password, setPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
 
+  //runs on mount
   const validateRoomAccess = useCallback(async () => {
     try {
+
       // Check if user is authenticated
       const token = localStorage.getItem("authToken");
       if (!token) {
@@ -45,9 +47,20 @@ export function RoomValidator({ roomId, children }: RoomValidatorProps) {
         return;
       }
 
+      // room access token for which room??
+
       // Check if room exists and get basic info
-      const roomRes = await axios.get(`${getBackendUrl()}/room/${roomId}`);
+      const roomRes = await axios.get(`${getBackendUrl()}/room/${roomId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const roomInfo = roomRes.data;
+
+      // Store room access token if provided (for public rooms)
+      if (roomInfo.roomAccessToken) {
+        localStorage.setItem("roomAccessToken", roomInfo.roomAccessToken);
+      }
 
       setState({
         loading: false,
@@ -95,12 +108,17 @@ export function RoomValidator({ roomId, children }: RoomValidatorProps) {
         joinData.password = roomPassword;
       }
 
-      await axios.post(`${getBackendUrl()}/room/join`, joinData, {
+      const response = await axios.post(`${getBackendUrl()}/room/join`, joinData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
+
+      // Store room access token for WebSocket authentication
+      if (response.data.roomAccessToken) {
+        localStorage.setItem("roomAccessToken", response.data.roomAccessToken);
+      }
 
       // If we reach here, access is granted
       setState((prev) => ({

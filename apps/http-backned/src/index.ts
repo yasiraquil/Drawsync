@@ -260,6 +260,15 @@ app.post("/room/join", Middleware, async (req, res) => {
       roomId: room.shortCode,
       name: room.name,
       isPublic: room.isPublic,
+      roomAccessToken: Jwt.sign(
+        { 
+          //@ts-ignore
+          userId: req.userId, 
+          roomId: room.shortCode, 
+          exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
+        }, 
+        JWT_SECRET
+      )
     });
   } catch (error) {
     console.error("Room join error:", error);
@@ -270,7 +279,7 @@ app.post("/room/join", Middleware, async (req, res) => {
 });
 
 // Get room info by short code
-app.get("/room/:shortCode", async (req, res) => {
+app.get("/room/:shortCode", Middleware, async (req, res) => {
   const shortCode = req.params.shortCode;
   const room = await prismaClient.room.findFirst({
     where: { shortCode },
@@ -289,11 +298,26 @@ app.get("/room/:shortCode", async (req, res) => {
     return;
   }
 
+  // For public rooms, generate room access token immediately
+  let roomAccessToken = null;
+  if (room.isPublic) {
+    roomAccessToken = Jwt.sign(
+      { 
+        //@ts-ignore
+        userId: req.userId, 
+        roomId: room.shortCode, 
+        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
+      }, 
+      JWT_SECRET
+    );
+  }
+
   res.json({
     roomId: room.shortCode,
     name: room.name,
     isPublic: room.isPublic,
     created_at: room.created_at,
+    roomAccessToken: roomAccessToken,
   });
 });
 
@@ -423,4 +447,6 @@ app.delete("/room/:shortCode", Middleware, async (req, res) => {
     });
   }
 });
-app.listen(3002, "0.0.0.0");
+app.listen(3002, "0.0.0.0", () => {
+  console.log("HTTP Backend server is listening on port 3002");
+});

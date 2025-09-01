@@ -310,10 +310,12 @@ export function Canvas({
 
       // If socket is already open, join room and request count immediately
       if (socket.readyState === WebSocket.OPEN) {
+        const roomAccessToken = localStorage.getItem("roomAccessToken");
         socket.send(
           JSON.stringify({
             type: "join_room",
             roomId: roomId,
+            roomAccessToken: roomAccessToken,
           }),
         );
         socket.send(
@@ -327,10 +329,12 @@ export function Canvas({
       const handleOpen = () => {
         setIsConnected(true);
         // Join room first, then request current participant count
+        const roomAccessToken = localStorage.getItem("roomAccessToken");
         socket.send(
           JSON.stringify({
             type: "join_room",
             roomId: roomId,
+            roomAccessToken: roomAccessToken,
           }),
         );
         socket.send(

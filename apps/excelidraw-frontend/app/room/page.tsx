@@ -171,9 +171,18 @@ function Home() {
       }
 
       // Just check if room exists first
-      const res = await axios.get(`${getBackendUrl()}/room/${joinCode.trim()}`);
+      const res = await axios.get(`${getBackendUrl()}/room/${joinCode.trim()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log("Room successfully joined", res.data);
+
+      // Store room access token if provided (for both public and private rooms)
+      if (res.data.roomAccessToken) {
+        localStorage.setItem("roomAccessToken", res.data.roomAccessToken);
+      }
 
       router.push(`${getExileUrl()}/${joinCode.trim()}`);
     } catch (error: unknown) {
