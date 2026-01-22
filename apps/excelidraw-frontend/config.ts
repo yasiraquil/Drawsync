@@ -24,3 +24,7 @@ export function getRoomUrl() {
 export function getExileUrl() {
   return `http://${getHost()}:3001/canvas`;
 }
+
+export function getMLBackendUrl() {
+  return `http://${getHost()}:3003`;
+}
