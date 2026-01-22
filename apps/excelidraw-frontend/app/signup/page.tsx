@@ -35,7 +35,7 @@ function Home() {
           };
           status?: number;
         };
-        request?: any;
+        request?: unknown;
         message?: string;
       };
 
