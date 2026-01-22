@@ -2,51 +2,65 @@
 import React from "react";
 import {
   Github,
-  Heart,
-  Share2,
-  Lock,
-  Sparkles,
-  PenTool,
-  Zap,
-  Users,
-  Globe,
   ArrowRight,
-  Star,
+  Users,
+  Zap,
+  Shield,
+  Palette,
+  MousePointer2,
+  Layers,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 function App() {
   const Router = useRouter();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Header */}
-      <header className="border-b border-white/10 backdrop-blur-sm bg-white/5 fixed w-full z-50">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl">
-              <PenTool className="h-6 w-6 text-white" />
+      <header className="fixed w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5">
+        <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5 text-black"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M12 19l7-7 3 3-7 7-3-3z" />
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+                <path d="M2 2l7.586 7.586" />
+              </svg>
             </div>
-            <span className="ml-3 text-xl font-bold text-white">DrawSync</span>
+            <span className="font-semibold text-lg">DrawSync</span>
           </div>
-          <div className="flex items-center space-x-4">
+
+          <div className="hidden md:flex items-center gap-8 text-sm text-gray-400">
+            <a href="#features" className="hover:text-white transition-colors">
+              Features
+            </a>
             <a
               href="https://github.com/yasiraquil/Drawsync"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-300"
+              className="hover:text-white transition-colors flex items-center gap-1.5"
             >
-              <Github className="h-5 w-5" />
-              <span className="hidden sm:inline">GitHub</span>
+              <Github className="w-4 h-4" />
+              GitHub
             </a>
+          </div>
+
+          <div className="flex items-center gap-3">
             <button
               onClick={() => Router.push("/signin")}
-              className="px-4 py-2 rounded-lg text-white hover:bg-white/10 transition-all duration-300"
+              className="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2"
             >
-              Sign In
+              Sign in
             </button>
             <button
               onClick={() => Router.push("/signup")}
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-90 transition-all duration-300 font-medium"
+              className="text-sm bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
             >
               Get Started
             </button>
@@ -55,220 +69,231 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <main className="pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-8">
-              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm text-blue-200">
-                Real-time Collaborative Whiteboard
-              </span>
+      <main className="pt-32 pb-20">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Hero */}
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <div className="inline-flex items-center gap-2 text-sm text-gray-400 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              Open source & free forever
             </div>
 
-            <h1 className="text-5xl sm:text-7xl font-bold mb-6 leading-tight">
-              <span className="text-white">Sketch ideas</span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+              Collaborative
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                together, anywhere
-              </span>
+              <span className="text-gray-500">whiteboard for teams</span>
             </h1>
-            <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-              DrawSync is a real-time collaborative whiteboard that lets your
-              team sketch diagrams, brainstorm ideas, and plan projects with
-              beautiful hand-drawn aesthetics.
+
+            <p className="text-lg text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">
+              Sketch diagrams, brainstorm ideas, and plan projects together in
+              real-time. Beautiful hand-drawn style that feels natural.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => Router.push("/signup")}
-                className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:-translate-y-1"
+                className="group flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-all"
               >
-                Start Drawing Free
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                Start drawing
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
               <a
                 href="https://github.com/yasiraquil/Drawsync"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-gray-300 px-6 py-4 rounded-xl border border-white/20 hover:bg-white/10 transition-all duration-300"
+                className="flex items-center gap-2 text-gray-400 hover:text-white px-6 py-3 rounded-lg border border-white/10 hover:border-white/20 transition-all"
               >
-                <Github className="h-5 w-5" />
-                View on GitHub
+                <Github className="w-4 h-4" />
+                View source
               </a>
             </div>
+          </div>
 
-            {/* Preview Window */}
-            <div className="relative mx-auto max-w-5xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-3xl opacity-20"></div>
-              <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-2 shadow-2xl border border-white/10">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="ml-4 text-sm text-gray-400">
-                    DrawSync Canvas
-                  </span>
+          {/* Canvas Preview */}
+          <div className="relative max-w-4xl mx-auto mb-32">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent z-10 pointer-events-none"></div>
+            <div className="bg-[#121212] rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+              {/* Window chrome */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-[#1a1a1a] border-b border-white/5">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f57]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#28c840]"></div>
                 </div>
-                <div className="aspect-video bg-slate-950 rounded-b-xl flex items-center justify-center overflow-hidden">
-                  <div className="grid grid-cols-3 gap-8 p-8">
-                    <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-dashed border-blue-400/50 rounded-xl p-6 text-blue-300">
-                      <PenTool className="h-8 w-8 mb-2" />
-                      <span>Sketch</span>
+                <div className="flex-1 text-center text-xs text-gray-500">
+                  DrawSync Canvas
+                </div>
+              </div>
+              {/* Canvas content */}
+              <div className="aspect-[16/9] bg-[#0d0d0d] p-8 flex items-center justify-center">
+                <div className="grid grid-cols-3 gap-6 text-center">
+                  <div className="p-6 rounded-xl border-2 border-dashed border-gray-700 bg-gray-800/30">
+                    <div className="w-12 h-12 bg-gray-700 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                      <MousePointer2 className="w-6 h-6 text-gray-400" />
                     </div>
-                    <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-2 border-dashed border-purple-400/50 rounded-xl p-6 text-purple-300">
-                      <Users className="h-8 w-8 mb-2" />
-                      <span>Collaborate</span>
+                    <span className="text-sm text-gray-400">Draw shapes</span>
+                  </div>
+                  <div className="p-6 rounded-xl border-2 border-dashed border-gray-700 bg-gray-800/30">
+                    <div className="w-12 h-12 bg-gray-700 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                      <Users className="w-6 h-6 text-gray-400" />
                     </div>
-                    <div className="bg-gradient-to-br from-pink-500/20 to-orange-500/20 border-2 border-dashed border-pink-400/50 rounded-xl p-6 text-pink-300">
-                      <Zap className="h-8 w-8 mb-2" />
-                      <span>Create</span>
+                    <span className="text-sm text-gray-400">
+                      Collaborate live
+                    </span>
+                  </div>
+                  <div className="p-6 rounded-xl border-2 border-dashed border-gray-700 bg-gray-800/30">
+                    <div className="w-12 h-12 bg-gray-700 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                      <Layers className="w-6 h-6 text-gray-400" />
                     </div>
+                    <span className="text-sm text-gray-400">
+                      Organize rooms
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Features Grid */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Everything you need to collaborate
+          {/* Features */}
+          <section id="features" className="mb-32">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Built for collaboration
+              </h2>
+              <p className="text-gray-400 max-w-lg mx-auto">
+                Everything you need to bring your team&apos;s ideas to life,
+                from quick sketches to detailed diagrams.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+                  <Zap className="w-5 h-5 text-yellow-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Real-time sync</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  See changes instantly as your team draws together. No refresh
+                  needed.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="w-5 h-5 text-green-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Private rooms</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Create password-protected rooms for sensitive brainstorming
+                  sessions.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+                  <Palette className="w-5 h-5 text-pink-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Hand-drawn style</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Beautiful sketchy aesthetics that make diagrams feel natural
+                  and approachable.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-5 h-5 text-blue-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Team presence</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  See who&apos;s in your room and what they&apos;re drawing in
+                  real-time.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+                  <Github className="w-5 h-5 text-gray-400" />
+                </div>
+                <h3 className="font-semibold mb-2">Open source</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Self-host or contribute. Built with transparency and community
+                  in mind.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
+                  <Layers className="w-5 h-5 text-purple-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Infinite canvas</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  No limits on space. Zoom, pan, and organize your ideas freely.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* CTA */}
+          <section className="text-center py-16 border-t border-white/5">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              Ready to start?
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Powerful features designed for teams who want to think visually
-              and work together seamlessly.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="group p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-blue-500/50 transition-all duration-300">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Share2 className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Real-time Collaboration
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                Work together with your team in real-time. See cursors move,
-                shapes appear, and ideas flow instantly across any distance.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="group p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-purple-500/50 transition-all duration-300">
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Lock className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Private & Secure Rooms
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                Create password-protected rooms for sensitive projects. Your
-                ideas stay secure with our authentication system.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="group p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-pink-500/50 transition-all duration-300">
-              <div className="bg-gradient-to-br from-pink-500 to-pink-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Hand-drawn Aesthetics
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                Create beautiful diagrams that look naturally hand-drawn.
-                Perfect for presentations, documentation, and brainstorming.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="border-y border-white/10 bg-gradient-to-r from-blue-900/20 via-purple-900/20 to-pink-900/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
-                  ∞
-                </div>
-                <div className="text-gray-400">Unlimited Canvases</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                  Real-time
-                </div>
-                <div className="text-gray-400">Sync & Updates</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent mb-2">
-                  100%
-                </div>
-                <div className="text-gray-400">Free & Open Source</div>
-              </div>
-              <div className="text-center">
-                <div className="flex justify-center mb-2">
-                  <Globe className="h-12 w-12 text-blue-400" />
-                </div>
-                <div className="text-gray-400">Works Everywhere</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-              Ready to start collaborating?
-            </h2>
-            <p className="text-gray-400 mb-10 max-w-xl mx-auto">
-              Join the community of creators, designers, and teams who use
-              DrawSync to bring their ideas to life.
+            <p className="text-gray-400 mb-8 max-w-md mx-auto">
+              Create your first room and start collaborating with your team in
+              seconds.
             </p>
             <button
               onClick={() => Router.push("/signup")}
-              className="group inline-flex items-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:-translate-y-1"
+              className="bg-white text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
             >
-              Get Started — It&apos;s Free
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              Get started for free
             </button>
-          </div>
+          </section>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-2">
-              <Heart className="h-4 w-4 text-red-500 fill-red-500" />
-              <span className="text-gray-400">
-                Made with love by{" "}
-                <a
-                  href="https://github.com/yasiraquil"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 transition-colors"
+      <footer className="border-t border-white/5 py-8">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-4 h-4 text-black"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
                 >
-                  @yasiraquil
-                </a>
-              </span>
+                  <path d="M12 19l7-7 3 3-7 7-3-3z" />
+                  <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+                </svg>
+              </div>
+              <span>DrawSync</span>
             </div>
-            <div className="flex items-center space-x-6">
+
+            <div className="flex items-center gap-6">
               <a
                 href="https://github.com/yasiraquil/Drawsync"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+                className="hover:text-white transition-colors flex items-center gap-1.5"
               >
-                <Github className="h-4 w-4" />
+                <Github className="w-4 h-4" />
                 GitHub
               </a>
+              <span>
+                Built by{" "}
+                <a
+                  href="https://github.com/yasiraquil"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:underline"
+                >
+                  @yasiraquil
+                </a>
+              </span>
             </div>
           </div>
         </div>
