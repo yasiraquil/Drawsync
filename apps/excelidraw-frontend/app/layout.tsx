@@ -27,18 +27,21 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Draw-App - Collaborative Whiteboard",
+  title: "DrawSync - Collaborative Whiteboard",
   description: "Real-time collaborative drawing and whiteboard app",
   viewport:
     "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
-  themeColor: "#ffffff",
+  themeColor: "#0a0a0a",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Draw-App",
+    title: "DrawSync",
   },
   formatDetection: {
     telephone: false,
+  },
+  icons: {
+    icon: "/icon.png",
   },
 };
 

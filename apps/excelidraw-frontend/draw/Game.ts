@@ -33,53 +33,54 @@ interface ShapeStyle {
 
 type Shape =
   | {
-      id: string;
-      type: "rect";
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      style?: ShapeStyle;
-    }
+    id: string;
+    type: "rect";
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    style?: ShapeStyle;
+  }
   | {
-      id: string;
-      type: "circle";
-      centerX: number;
-      centerY: number;
-      radius: number;
-      style?: ShapeStyle;
-    }
+    id: string;
+    type: "circle";
+    centerX: number;
+    centerY: number;
+    radius: number;
+    style?: ShapeStyle;
+  }
   | {
-      id: string;
-      type: "line";
-      startX: number;
-      startY: number;
-      endX: number;
-      endY: number;
-      style?: ShapeStyle;
-    }
+    id: string;
+    type: "line";
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    style?: ShapeStyle;
+  }
   | {
-      id: string;
-      type: "path";
-      points: { x: number; y: number }[];
-      style?: ShapeStyle;
-    }
+    id: string;
+    type: "path";
+    points: { x: number; y: number }[];
+    style?: ShapeStyle;
+  }
   | {
-      id: string;
-      type: "text";
-      x: number;
-      y: number;
-      text: string;
-      fontSize: number;
-      color: string;
-      style?: ShapeStyle;
-    };
+    id: string;
+    type: "text";
+    x: number;
+    y: number;
+    text: string;
+    fontSize: number;
+    color: string;
+    style?: ShapeStyle;
+  };
 
 export class Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   public existingShapes: Shape[];
   private historyStack: Shape[][] = [];
+  private redoStack: Shape[][] = [];
   private roomId: string;
   private clicked: boolean;
   private startX = 0;
@@ -1021,11 +1022,34 @@ export class Game {
 
     window.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        e.preventDefault();
         if (this.historyStack.length > 0) {
           const previousState = this.historyStack.pop()!;
+          // Save current state to redo stack
+          this.redoStack.push([...this.existingShapes]);
           // Ensure the previous state is valid
           if (Array.isArray(previousState)) {
             this.existingShapes = previousState.filter(
+              (shape) =>
+                shape &&
+                typeof shape === "object" &&
+                shape.type &&
+                (shape as any).id,
+            );
+            this.clearCanvas();
+          }
+        }
+      }
+      // Redo: Ctrl+Y or Ctrl+Shift+Z
+      if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.shiftKey && e.key === "z"))) {
+        e.preventDefault();
+        if (this.redoStack.length > 0) {
+          const nextState = this.redoStack.pop()!;
+          // Save current state to history stack
+          this.historyStack.push([...this.existingShapes]);
+          // Restore the next state
+          if (Array.isArray(nextState)) {
+            this.existingShapes = nextState.filter(
               (shape) =>
                 shape &&
                 typeof shape === "object" &&
@@ -1757,14 +1781,14 @@ export class Game {
           (i > 0
             ? this.worldToScreen(points[i - 1].x, points[i - 1].y).x
             : current.x)) *
-          0.3;
+        0.3;
       const cp1y =
         current.y +
         (next.y -
           (i > 0
             ? this.worldToScreen(points[i - 1].x, points[i - 1].y).y
             : current.y)) *
-          0.3;
+        0.3;
       const cp2x = next.x - (next.x - current.x) * 0.3;
       const cp2y = next.y - (next.y - current.y) * 0.3;
 
