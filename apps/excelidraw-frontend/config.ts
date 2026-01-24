@@ -9,10 +9,12 @@ export function getHost() {
   return "localhost";
 }
 
+// HTTP Backend - proxied through Nginx in production
 export function getBackendUrl() {
-  return `http://${getHost()}:3002`;
+  return "/api";
 }
 
+// WebSocket - needs direct connection (not proxied via /api)
 export function getWsUrl() {
   return `ws://${getHost()}:8081`;
 }
@@ -25,6 +27,7 @@ export function getExileUrl() {
   return `http://${getHost()}:3001/canvas`;
 }
 
+// ML Backend - proxied through Nginx in production
 export function getMLBackendUrl() {
-  return `http://${getHost()}:3003`;
+  return "/ml-api";
 }
