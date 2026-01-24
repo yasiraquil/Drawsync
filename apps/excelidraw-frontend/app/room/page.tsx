@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { getBackendUrl, getExileUrl } from "@/config";
+import { getBackendUrl } from "@/config";
 import { useRouter } from "next/navigation";
 import {
   PenLine,
@@ -141,7 +141,7 @@ function Home() {
       setRoomPassword("");
       setIsPublic(true);
 
-      router.push(`${getExileUrl()}/${roomId}`);
+      router.push(`/canvas/${roomId}`);
     } catch (error: unknown) {
       const axiosError = error as {
         response?: { data?: { message?: string } };
@@ -171,7 +171,7 @@ function Home() {
     }
 
     // Let RoomValidator handle all validation - just redirect to canvas
-    router.push(`${getExileUrl()}/${joinCode.trim()}`);
+    router.push(`/canvas/${joinCode.trim()}`);
   };
 
   const deleteRoom = async (shortCode: string, roomName: string) => {
@@ -255,7 +255,7 @@ function Home() {
   };
 
   const joinMyRoom = (shortCode: string) => {
-    router.push(`${getExileUrl()}/${shortCode}`);
+    router.push(`/canvas/${shortCode}`);
   };
 
   return (

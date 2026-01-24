@@ -1,19 +1,21 @@
 /**
  * WebSocket utility for creating connections to the backend.
  * Uses protocol-aware URLs that work with Nginx proxy in production.
- * In development, connects directly to port 8081.
+ * In development (localhost), connects directly to port 8081.
  */
 
-function getBaseWsUrl(): string {
-    const isDev = window.location.hostname === "localhost" ||
+function isDevelopment(): boolean {
+    return window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
+}
 
-    if (isDev) {
+function getBaseWsUrl(): string {
+    if (isDevelopment()) {
         // Local development - connect directly to WebSocket server
         return `ws://${window.location.hostname}:8081`;
     }
 
-    // Production - use Nginx proxy at /ws
+    // Production - use Nginx proxy at /ws (wss for HTTPS)
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     return `${protocol}://${window.location.host}/ws`;
 }
@@ -39,7 +41,7 @@ export function createWebSocket(path: string = "", params?: Record<string, strin
  */
 export function getWebSocketUrl(): string {
     if (typeof window === "undefined") {
-        return "ws://localhost:8081";
+        return "ws://localhost:8081"; // SSR fallback
     }
 
     return getBaseWsUrl();
