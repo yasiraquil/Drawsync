@@ -13,7 +13,10 @@ import { parse } from "path";
 import { Middleware } from "./middleware";
 import cors from "cors";
 import bcrypt from "bcrypt";
+
 const app = express();
+const router = express.Router();
+
 app.use(cors());
 app.use(express.json());
 
@@ -27,7 +30,7 @@ function generateShortCode(): string {
   return result;
 }
 
-app.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
   if (!parsedData.success) {
     console.log("Validation error:", parsedData.error);
@@ -63,7 +66,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/signin", async (req, res) => {
+router.post("/signin", async (req, res) => {
   const parsedData = SigninSchema.safeParse(req.body);
   if (!parsedData.success) {
     res.status(400).json({
@@ -107,7 +110,7 @@ app.post("/signin", async (req, res) => {
   });
 });
 
-app.post("/room", Middleware, async (req, res) => {
+router.post("/room", Middleware, async (req, res) => {
   const parsedData = CreateRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
     console.log(parsedData.error);
@@ -164,7 +167,8 @@ app.post("/room", Middleware, async (req, res) => {
     });
   }
 });
-app.get("/chats/:roomId", async (req, res) => {
+
+router.get("/chats/:roomId", async (req, res) => {
   try {
     const roomShortCode = req.params.roomId;
 
@@ -213,8 +217,9 @@ app.get("/chats/:roomId", async (req, res) => {
     });
   }
 });
+
 // Join room endpoint
-app.post("/room/join", Middleware, async (req, res) => {
+router.post("/room/join", Middleware, async (req, res) => {
   const parsedData = JoinRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
     res.status(400).json({
@@ -261,12 +266,12 @@ app.post("/room/join", Middleware, async (req, res) => {
       name: room.name,
       isPublic: room.isPublic,
       roomAccessToken: Jwt.sign(
-        { 
+        {
           //@ts-ignore
-          userId: req.userId, 
-          roomId: room.shortCode, 
+          userId: req.userId,
+          roomId: room.shortCode,
           exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
-        }, 
+        },
         JWT_SECRET
       )
     });
@@ -279,7 +284,7 @@ app.post("/room/join", Middleware, async (req, res) => {
 });
 
 // Get room info by short code
-app.get("/room/:shortCode", Middleware, async (req, res) => {
+router.get("/room/:shortCode", Middleware, async (req, res) => {
   const shortCode = req.params.shortCode;
   const room = await prismaClient.room.findFirst({
     where: { shortCode },
@@ -302,12 +307,12 @@ app.get("/room/:shortCode", Middleware, async (req, res) => {
   let roomAccessToken = null;
   if (room.isPublic) {
     roomAccessToken = Jwt.sign(
-      { 
+      {
         //@ts-ignore
-        userId: req.userId, 
-        roomId: room.shortCode, 
+        userId: req.userId,
+        roomId: room.shortCode,
         exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
-      }, 
+      },
       JWT_SECRET
     );
   }
@@ -322,7 +327,7 @@ app.get("/room/:shortCode", Middleware, async (req, res) => {
 });
 
 // Get user's created rooms
-app.get("/my-rooms", Middleware, async (req, res) => {
+router.get("/my-rooms", Middleware, async (req, res) => {
   try {
     //@ts-ignore
     const userId = req.userId;
@@ -348,7 +353,7 @@ app.get("/my-rooms", Middleware, async (req, res) => {
 });
 
 // Update room
-app.put("/room/:shortCode", Middleware, async (req, res) => {
+router.put("/room/:shortCode", Middleware, async (req, res) => {
   const parsedData = UpdateRoomSchema.safeParse(req.body);
   if (!parsedData.success) {
     res.status(400).json({
@@ -402,7 +407,7 @@ app.put("/room/:shortCode", Middleware, async (req, res) => {
 });
 
 // Delete room
-app.delete("/room/:shortCode", Middleware, async (req, res) => {
+router.delete("/room/:shortCode", Middleware, async (req, res) => {
   try {
     //@ts-ignore
     const userId = req.userId;
@@ -447,6 +452,12 @@ app.delete("/room/:shortCode", Middleware, async (req, res) => {
     });
   }
 });
+
+// Mount all routes under /api prefix
+app.use("/api", router);
+
 app.listen(3002, "0.0.0.0", () => {
   console.log("HTTP Backend server is listening on port 3002");
+  console.log("All routes are available under /api/* prefix");
 });
+
