@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=your-email@example.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/excelidraw-frontend/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`drawsync.space`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3001"
+    environment:
+      - NEXT_PUBLIC_HTTP_BACKEND_URL=https://drawsync.space/api
+      - NEXT_PUBLIC_WS_BACKEND_URL=wss://drawsync.space/ws
+    restart: unless-stopped
+
+  http-backend:
+    build:
+      context: .
+      dockerfile: apps/http-backned/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`drawsync.space`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.api.loadbalancer.server.port=3002"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+
+  ws-backend:
+    build:
+      context: .
+      dockerfile: apps/ws-backend/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ws.rule=Host(`drawsync.space`) && PathPrefix(`/ws`)"
+      - "traefik.http.routers.ws.entrypoints=websecure"
+      - "traefik.http.routers.ws.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ws.loadbalancer.server.port=8081"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
