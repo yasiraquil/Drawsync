@@ -186,11 +186,11 @@ function Home() {
                 className="ml-2 block text-sm text-gray-900"
               >
                 I agree to the{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500">
+                <a href="/terms" className="text-blue-600 hover:text-blue-500">
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500">
+                <a href="/privacy" className="text-blue-600 hover:text-blue-500">
                   Privacy Policy
                 </a>
               </label>

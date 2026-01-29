@@ -456,8 +456,8 @@ router.delete("/room/:shortCode", Middleware, async (req, res) => {
 // Mount all routes under /api prefix
 app.use("/api", router);
 
-app.listen(3002, "0.0.0.0", () => {
-  console.log("HTTP Backend server is listening on port 3002");
+const PORT = parseInt(process.env.PORT || "3002", 10);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`HTTP Backend server is listening on port ${PORT}`);
   console.log("All routes are available under /api/* prefix");
 });
-

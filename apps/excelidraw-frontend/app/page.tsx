@@ -73,10 +73,7 @@ function App() {
         <div className="max-w-6xl mx-auto px-6">
           {/* Hero */}
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <div className="inline-flex items-center gap-2 text-sm text-gray-400 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Open source & free forever
-            </div>
+
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
               Collaborative
@@ -166,69 +163,58 @@ function App() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
-                  <Zap className="w-5 h-5 text-yellow-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Real-time sync</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  See changes instantly as your team draws together. No refresh
-                  needed.
+            <div className="grid md:grid-cols-2 gap-px bg-white/5 rounded-2xl overflow-hidden">
+              {/* Real-time sync */}
+              <div className="bg-[#0a0a0a] p-10">
+                <Zap className="w-8 h-8 text-white mb-6" />
+                <h3 className="text-xl font-semibold mb-3">Real-time sync</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  See changes instantly as your team draws together. Every stroke syncs across all participants with zero delay.
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="w-5 h-5 text-green-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Private rooms</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  Create password-protected rooms for sensitive brainstorming
-                  sessions.
+              {/* Private rooms */}
+              <div className="bg-[#0a0a0a] p-10">
+                <Shield className="w-8 h-8 text-white mb-6" />
+                <h3 className="text-xl font-semibold mb-3">Private rooms</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Create password-protected rooms for sensitive brainstorming sessions. Your ideas stay secure.
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
-                  <Palette className="w-5 h-5 text-pink-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Hand-drawn style</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  Beautiful sketchy aesthetics that make diagrams feel natural
-                  and approachable.
+              {/* Hand-drawn style */}
+              <div className="bg-[#0a0a0a] p-10">
+                <Palette className="w-8 h-8 text-white mb-6" />
+                <h3 className="text-xl font-semibold mb-3">Hand-drawn style</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Beautiful sketchy aesthetics that make diagrams feel natural and approachable.
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="w-5 h-5 text-blue-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Team presence</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  See who&apos;s in your room and what they&apos;re drawing in
-                  real-time.
+              {/* Team presence */}
+              <div className="bg-[#0a0a0a] p-10">
+                <Users className="w-8 h-8 text-white mb-6" />
+                <h3 className="text-xl font-semibold mb-3">Team presence</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  See who&apos;s in your room and what they&apos;re working on in real-time.
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
-                  <Github className="w-5 h-5 text-gray-400" />
-                </div>
-                <h3 className="font-semibold mb-2">Open source</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  Self-host or contribute. Built with transparency and community
-                  in mind.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center mb-4">
-                  <Layers className="w-5 h-5 text-purple-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Infinite canvas</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
+              {/* Infinite canvas */}
+              <div className="bg-[#0a0a0a] p-10">
+                <Layers className="w-8 h-8 text-white mb-6" />
+                <h3 className="text-xl font-semibold mb-3">Infinite canvas</h3>
+                <p className="text-gray-400 leading-relaxed">
                   No limits on space. Zoom, pan, and organize your ideas freely.
+                </p>
+              </div>
+
+              {/* Keyboard shortcuts */}
+              <div className="bg-[#0a0a0a] p-10">
+                <MousePointer2 className="w-8 h-8 text-white mb-6" />
+                <h3 className="text-xl font-semibold mb-3">Keyboard shortcuts</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Speed up your workflow with intuitive keyboard shortcuts and quick actions.
                 </p>
               </div>
             </div>
@@ -275,6 +261,18 @@ function App() {
 
             <div className="flex items-center gap-6">
               <a
+                href="/terms"
+                className="hover:text-white transition-colors"
+              >
+                Terms & Conditions
+              </a>
+              <a
+                href="/privacy"
+                className="hover:text-white transition-colors"
+              >
+                Privacy Policy
+              </a>
+              <a
                 href="https://github.com/yasiraquil/Drawsync"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -283,17 +281,6 @@ function App() {
                 <Github className="w-4 h-4" />
                 GitHub
               </a>
-              <span>
-                Built by{" "}
-                <a
-                  href="https://github.com/yasiraquil"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white hover:underline"
-                >
-                  @yasiraquil
-                </a>
-              </span>
             </div>
           </div>
         </div>

@@ -2,7 +2,9 @@ import { WebSocketServer, WebSocket } from "ws";
 import jwt, { decode, JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common/config";
 import { prismaClient } from "@repo/db/client";
-const wss = new WebSocketServer({ port: 8081, host: "0.0.0.0" });
+
+const PORT = parseInt(process.env.PORT || "8081", 10);
+const wss = new WebSocketServer({ port: PORT, host: "0.0.0.0" });
 
 // Add better error handling
 wss.on("error", (error) => {
@@ -10,7 +12,7 @@ wss.on("error", (error) => {
 });
 
 wss.on("listening", () => {
-  console.log("WebSocket server is listening on port 8081");
+  console.log(`WebSocket server is listening on port ${PORT}`);
 });
 
 interface user {
@@ -146,7 +148,7 @@ wss.on("connection", function connection(ws, request) {
 
       if (parsedData.type === "join_room") {
         console.log("User joining room:", parsedData.roomId);
-        
+
         // ✅ Validate room access token
         if (!parsedData.roomAccessToken) {
           ws.send(JSON.stringify({
@@ -158,11 +160,11 @@ wss.on("connection", function connection(ws, request) {
 
         try {
           const decoded = jwt.verify(parsedData.roomAccessToken, process.env.JWT_SECRET!) as any;
-          
+
           // Verify token belongs to this user and room
           if (decoded.userId !== userId || decoded.roomId !== parsedData.roomId) {
             ws.send(JSON.stringify({
-              type: "error", 
+              type: "error",
               message: "Invalid room access token"
             }));
             return;
