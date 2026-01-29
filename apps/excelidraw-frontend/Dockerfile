@@ -17,6 +17,6 @@ RUN pnpm --filter excelidraw-frontend build
 
 WORKDIR /app/apps/excelidraw-frontend
 
-EXPOSE 3001
+EXPOSE 3000
 
 CMD ["pnpm", "start"]
