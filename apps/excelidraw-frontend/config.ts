@@ -12,7 +12,7 @@ export function getBackendUrl() {
   if (process.env.NEXT_PUBLIC_HTTP_BACKEND_URL) {
     return process.env.NEXT_PUBLIC_HTTP_BACKEND_URL;
   }
-  return `http://${getHost()}:3002`;
+  return `http://${getHost()}:3002/api`;
 }
 
 export function getWsUrl() {
